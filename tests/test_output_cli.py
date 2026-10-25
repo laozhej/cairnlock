@@ -6,13 +6,57 @@ import json
 import tempfile
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
 from cairnlock.cli import app
 from cairnlock.models import Finding
 from cairnlock.output import render_json, render_sarif, render_text
+from cairnlock.rules import RULE_META
 
 runner = CliRunner()
+
+
+@pytest.mark.parametrize("rule_id", sorted(RULE_META))
+def test_cli_explain_registered_rule(rule_id: str) -> None:
+    result = runner.invoke(app, ["--no-banner", "explain", rule_id])
+    assert result.exit_code == 0
+    assert result.stdout.startswith(f"{rule_id}\n")
+    assert RULE_META[rule_id] in result.stdout
+    assert "Profile: " in result.stdout
+    assert "Scope: " in result.stdout
+    assert "Severity: " in result.stdout
+    assert f"https://github.com/pennacle-security/cairnlock/blob/main/docs/rules.md#{rule_id.lower()}" in result.stdout
+
+
+@pytest.mark.parametrize(
+    ("rule_id", "profile", "scope", "severity"),
+    [
+        ("PIN001", "core", "JSON descriptions, SKILL.md frontmatter", "high"),
+        ("MCP002", "core", "MCP JSON configs", "medium"),
+        ("HUC001", "core", "all context files", "high/medium/low"),
+        ("SEC001", "extended", "all scanned files", "high/medium"),
+    ],
+)
+def test_cli_explain_rule_details(rule_id: str, profile: str, scope: str, severity: str) -> None:
+    result = runner.invoke(app, ["--no-banner", "explain", rule_id])
+    assert result.exit_code == 0
+    assert f"Profile: {profile}\n" in result.stdout
+    assert f"Scope: {scope}\n" in result.stdout
+    assert f"Severity: {severity}\n" in result.stdout
+
+
+def test_cli_explain_unknown_rule() -> None:
+    result = runner.invoke(app, ["--no-banner", "explain", "UNKNOWN"])
+    assert result.exit_code == 2
+    assert result.stdout == ""
+    assert "Unknown rule ID: UNKNOWN" in result.stderr
+    assert f"Valid rule IDs: {', '.join(sorted(RULE_META))}" in result.stderr
+
+
+def test_cli_explain_requires_rule_id() -> None:
+    result = runner.invoke(app, ["--no-banner", "explain"])
+    assert result.exit_code == 2
 
 
 def test_render_text() -> None:

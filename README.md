@@ -84,6 +84,7 @@ cairnlock verify    # fail on unreviewed changes
 cairnlock diff      # changes, with findings inside them
 cairnlock approve AGENTS.md   # mark a reviewed change
 cairnlock rules     # list the rule set
+cairnlock explain PIN001  # show a rule's scope, severity and reference
 ```
 
 Real output from a skill file containing a pipe-to-shell installer, a base64

@@ -32,6 +32,28 @@ err_console = Console(stderr=True)
 
 SEVERITY_RANK = {"low": 0, "medium": 1, "high": 2}
 
+_RULE_DETAILS = {
+    "HUC001": ("all context files", "high/medium/low"),
+    "PIN001": ("JSON descriptions, SKILL.md frontmatter", "high"),
+    "REM001": ("SKILL.md, skills/ files", "high/medium"),
+    "MCP001": ("MCP JSON configs", "high"),
+    "MCP002": ("MCP JSON configs", "medium"),
+    "MCP003": ("MCP JSON configs", "medium"),
+    "MCP004": ("MCP JSON configs", "high"),
+    "UNP001": ("MCP JSON configs", "medium"),
+    "SEC001": ("all scanned files", "high/medium"),
+    "SHC001": ("source files (extended)", "high/medium"),
+    "NET001": ("source files (extended)", "high/medium"),
+    "FSY001": ("source files (extended)", "high/medium"),
+    "ENV001": ("source files (extended)", "high/medium"),
+    "PRI001": ("source files (extended)", "high/medium"),
+    "OBF001": ("source files, non-skill (extended)", "high/medium/low"),
+    "SUP001": ("dependency files (extended)", "high/medium/low"),
+    "CFG001": ("config files, non-markdown (extended)", "high/medium"),
+    "TOO001": ("tool definitions, JSON configs", "high/medium"),
+    "CRY001": ("source files (extended)", "high/medium/low"),
+}
+
 
 class OutputFormat(StrEnum):
     text = "text"
@@ -449,33 +471,34 @@ def rules(
     for rule in RULES:
         for rid in sorted(rule_ids(rule)):
             profile = profile_of.get(rid, "?")
-            scope = {
-                "HUC001": "all context files",
-                "PIN001": "JSON descriptions, SKILL.md frontmatter",
-                "REM001": "SKILL.md, skills/ files",
-                "MCP001": "MCP JSON configs",
-                "MCP002": "MCP JSON configs",
-                "MCP003": "MCP JSON configs",
-                "MCP004": "MCP JSON configs",
-                "UNP001": "MCP JSON configs",
-                "SEC001": "all scanned files",
-                "SHC001": "source files (extended)",
-                "NET001": "source files (extended)",
-                "FSY001": "source files (extended)",
-                "ENV001": "source files (extended)",
-                "PRI001": "source files (extended)",
-                "OBF001": "source files, non-skill (extended)",
-                "SUP001": "dependency files (extended)",
-                "CFG001": "config files, non-markdown (extended)",
-                "TOO001": "tool definitions, JSON configs",
-                "CRY001": "source files (extended)",
-            }.get(rid, "varies")
+            scope, _ = _RULE_DETAILS.get(rid, ("varies", "varies"))
             if verbose:
                 table.add_row(rid, profile, scope, RULE_META.get(rid, rid), rule.__name__)
             else:
                 table.add_row(rid, profile, scope, RULE_META.get(rid, rid))
 
     console.print(table)
+
+
+@app.command()
+def explain(
+    rule_id: Annotated[str, typer.Argument(help="Rule ID to explain, such as PIN001.")],
+) -> None:
+    """Explain a detection rule's profile, scope, severity and description."""
+    from cairnlock.rules import RULE_META
+
+    if rule_id not in RULE_META:
+        typer.echo(f"Unknown rule ID: {rule_id}", err=True)
+        typer.echo(f"Valid rule IDs: {', '.join(sorted(RULE_META))}", err=True)
+        raise typer.Exit(2)
+
+    profile = next(name for name, ids in PROFILE_RULES.items() if rule_id in ids)
+    scope, severity = _RULE_DETAILS[rule_id]
+    typer.echo(f"{rule_id}\nProfile: {profile}\nScope: {scope}\nSeverity: {severity}")
+    typer.echo(f"Description: {RULE_META[rule_id]}")
+    typer.echo(
+        f"Reference: https://github.com/pennacle-security/cairnlock/blob/main/docs/rules.md#{rule_id.lower()}"
+    )
 
 
 @app.command()

@@ -7,6 +7,12 @@ Semantic Versioning 2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `cairnlock explain <RULE_ID>` prints a rule's profile, scope, severity,
+  description and reference link. Unknown IDs exit with status 2 and list
+  the valid rule IDs.
+
 ## [0.5.0] - 2026-10-25
 
 ### Added
