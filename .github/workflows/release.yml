@@ -12,10 +12,8 @@ jobs:
     permissions:
       contents: read
     steps:
-      # TODO pin SHA
-      - uses: actions/checkout@v7
-      # TODO pin SHA
-      - uses: actions/setup-python@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.12"
       - name: Install build tools
@@ -24,8 +22,7 @@ jobs:
         run: python -m build
       - name: Twine check
         run: python -m twine check dist/*
-      # TODO pin SHA
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: dist
           path: dist/
@@ -38,14 +35,12 @@ jobs:
     permissions:
       id-token: write
     steps:
-      # TODO pin SHA
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: dist
           path: dist/
-      # TODO pin SHA
       - name: Publish to PyPI (trusted publishing, OIDC)
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
 
   github-release:
     needs: build
@@ -53,10 +48,8 @@ jobs:
     permissions:
       contents: write
     steps:
-      # TODO pin SHA
-      - uses: actions/checkout@v7
-      # TODO pin SHA
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: dist
           path: dist/
@@ -74,9 +67,8 @@ jobs:
               raise SystemExit(f"no CHANGELOG section for {version}")
           open("NOTES.md", "w", encoding="utf-8").write(match.group(1).strip() + "\n")
           PY
-      # TODO pin SHA
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
