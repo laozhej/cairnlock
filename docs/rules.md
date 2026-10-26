@@ -43,6 +43,10 @@ not flagged.
 
 Matches injection phrases such as "ignore previous instructions" or "reveal
 the system prompt" inside tool and skill description fields only.
+Selected Indonesian phrases are also matched, including "abaikan semua
+instruksi sebelumnya" and "ungkapkan prompt sistem". This is a phrase list,
+so paraphrases and other languages can be missed; benign descriptions quoting
+these phrases can trigger findings.
 
 ## REM001 — remote downloads in skills
 

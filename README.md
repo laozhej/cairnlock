@@ -353,7 +353,8 @@ folder. `docs/social-kit.md` holds ready-to-post announcements.
 ## Limitations
 
 - Detection is pattern-based; false positives and false negatives occur.
-- English-only phrase lists for prompt injection.
+- Prompt-injection phrase lists cover English and selected Indonesian phrases;
+  other languages and paraphrases can go undetected.
 - MCP config checks are heuristics (key names, flag strings).
 - Secrets rule catches accidental copies; not a full secret scanner.
 - Files over 1 MB are skipped.

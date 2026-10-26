@@ -7,6 +7,11 @@ Semantic Versioning 2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- PIN001 detects selected Indonesian prompt-injection phrases in JSON
+  descriptions and SKILL.md frontmatter, with bad/good fixtures.
+
 ## [0.8.0] - 2026-10-25
 
 ### Added
@@ -37,6 +42,7 @@ Semantic Versioning 2.0.0.
 - Discovery internals: `scanner.scan` accepts `include_ancestors`, and the
   CLI walks `(path, relative)` target pairs so project files and ancestor
   files share one loop.
+
 
 ## [0.7.0] - 2026-10-25
 

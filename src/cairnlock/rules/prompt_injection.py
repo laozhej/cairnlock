@@ -35,6 +35,17 @@ _PATTERNS = [
     )
 ]
 
+_INDONESIAN_PATTERNS = [
+    re.compile(p, re.IGNORECASE)
+    for p in (
+        r"\babaikan\s+(?:semua\s+)?instruksi\s+sebelumnya\b",
+        r"\bungkapkan\s+(?:system\s+prompt|prompt\s+sistem)\b",
+        r"\bkirim\s+semua\s+data\s+ke\b",
+        r"\bsembunyikan\s+dari\s+pengguna\b",
+        r"\bbertindak\s+tanpa\s+batasan\b",
+    )
+]
+
 _FRONTMATTER_DESC = re.compile(r"^description:\s*(.+)$", re.MULTILINE)
 
 
@@ -109,7 +120,7 @@ def check(rel_path: str, text: str) -> list[Finding]:
 
     findings: list[Finding] = []
     for line, value in descriptions:
-        for pat in _PATTERNS:
+        for pat in (*_PATTERNS, *_INDONESIAN_PATTERNS):
             m = pat.search(value)
             if m:
                 snippet = m.group(0)[:60]

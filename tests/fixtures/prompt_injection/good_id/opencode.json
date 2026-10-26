@@ -1,0 +1,13 @@
+{
+  "tools": {
+    "pencari": {
+      "description": "Cari dokumen sesuai instruksi pengguna dan tampilkan ringkasan."
+    },
+    "pengirim": {
+      "description": "Kirim ringkasan ke pengguna setelah mendapat persetujuan."
+    },
+    "pembaca": {
+      "description": "Baca dokumen tanpa batasan ukuran dan simpan hasilnya secara lokal."
+    }
+  }
+}
